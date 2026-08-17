@@ -2,6 +2,8 @@ import os
 from dotenv import load_dotenv
 import argparse
 
+from prompts import system_prompt
+
 parser = argparse.ArgumentParser(description="Chatbot")
 
 load_dotenv()
@@ -19,6 +21,7 @@ def generate_content(client, messages):
     return client.chat.completions.create(
         model="openrouter/free",
         messages=messages,
+        temperature=0,
     )
 
 
@@ -27,10 +30,8 @@ def main():
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     args = parser.parse_args()
     messages = [
-        {
-            "role": "user",
-            "content": args.user_prompt,
-        }
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": args.user_prompt},
     ]
     response = generate_content(client, messages)
     if args.verbose:
